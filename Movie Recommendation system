@@ -1,0 +1,37 @@
+import pandas as pd
+import numpy as np
+from sklearn.metrics.pairwise import cosine_similarity
+
+min_rating_preference = float(input("Enter your minimum rating Movie preference (1 to 5): "))
+
+user_genre_preferences = input("Enter your preferred genres (Adventure , Animation , children , comedy , Fantasy , Romance , Crime , Thriller , Action , Drama , Horror , Mystery ,Sci-Fi): ").lower().split(',')
+
+movies = pd.read_csv("D:/codsoft/movies.csv")
+
+filtered_movies = movies[(movies['ratings'] >= min_rating_preference) & movies['genres'].apply(lambda x: any(genre.lower() in x.lower() for genre in user_genre_preferences))]
+
+print(f"\n recommended movies with ratings above {min_rating_preference} and  {user_genre_preferences} genres:")
+
+if filtered_movies.empty:
+    print("No movies found with the given criteria.")
+else:
+    for index, row in filtered_movies.head().iterrows():
+        print(f"{index + 1}. Title: {row['title']}\nRating: {row['ratings']}\nGenres: {row['genres']}\n")
+
+while True:
+    more_recommendations = input("Do you want more recommendations? (yes/no): ").lower()
+    
+    if more_recommendations != 'yes':
+        break
+
+    
+    filtered_movies = filtered_movies.iloc[5:]
+
+    print("\nrecommended movies:")
+
+    if filtered_movies.empty:
+        print("No more movies found with the given criteria.")
+        break
+
+    for index, row in filtered_movies.head().iterrows():
+        print(f"{index + 1}. Title: {row['title']}\nRating: {row['ratings']}\nGenres: {row['genres']}\n")
